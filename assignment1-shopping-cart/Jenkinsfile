@@ -2,52 +2,57 @@ pipeline {
     agent any
 
     environment {
-        // 1. 必须与在 Jenkins 'Credentials' 里面设置的 ID 完全一致
+        // 1. 确保 Jenkins 凭据 ID 正确
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-cred'
-
-        // 2. 修改为你的 Docker Hub 仓库名
         DOCKERHUB_REPO = 'hechun202601/shopping-cart-localization'
-
-        // 3. 标签可以保持 latest，或者改为你的版本号
         DOCKER_IMAGE_TAG = 'latest'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // 4. 修改为自己的 GitHub 仓库地址
+                // 4. 拉取仓库 [cite: 83, 84]
                 git 'https://github.com/hechun2024/SEP2_assignment.git'
             }
         }
 
         stage('Build') {
             steps {
-                // 如果 Dockerfile 在子目录下，这里需要 cd 进去或者在根目录运行
-                sh 'mvn clean install -DskipTests'
+                // 【标注：必须进入子目录执行】 [cite: 85]
+                dir('assignment1-shopping-cart') {
+                    sh 'mvn clean install -DskipTests'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                // 【标注：进入子目录执行单元测试】 [cite: 76, 78]
+                dir('assignment1-shopping-cart') {
+                    sh 'mvn test'
+                }
             }
         }
 
         stage('Code Coverage') {
             steps {
-                sh 'mvn jacoco:report'
+                // 【标注：生成 JaCoCo 报告】 [cite: 79, 110]
+                dir('assignment1-shopping-cart') {
+                    sh 'mvn jacoco:report'
+                }
             }
         }
 
         stage('Publish Test Results') {
             steps {
-                // 这里的路径要确保能搜到你的测试报告 xml
+                // Jenkins 会自动搜索工作区下的 xml [cite: 89]
                 junit '**/target/surefire-reports/*.xml'
             }
         }
 
         stage('Publish Coverage Report') {
             steps {
+                // 发布测试覆盖率结果 [cite: 79]
                 jacoco()
             }
         }
@@ -55,8 +60,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // 这里的 '.' 代表 Dockerfile 所在的当前路径
-                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
+                    // 【标注：进入子目录并指定 amd64 架构构建】 [cite: 92, 95]
+                    dir('assignment1-shopping-cart') {
+                        sh "docker build --platform linux/amd64 -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
+                    }
                 }
             }
         }
@@ -64,20 +71,22 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // 这里会调用上面定义的 DOCKERHUB_CREDENTIALS_ID 进行登录并推送
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
-                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                    // 登录并推送镜像 [cite: 98, 100, 101]
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh "echo \$PASS | docker login -u \$USER --password-stdin"
+                        sh "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
                     }
                 }
             }
         }
     }
+
     post {
-            success {
-                echo '恭喜！镜像已成功推送到 Docker Hub。'
-            }
-            failure {
-                echo '出错了，请检查 Jenkins 控制台日志。'
-            }
+        success {
+            echo '恭喜！项目已成功构建、测试并推送到 Docker Hub。' [cite: 113]
         }
+        failure {
+            echo '构建失败，请检查控制台输出。'
+        }
+    }
 }
