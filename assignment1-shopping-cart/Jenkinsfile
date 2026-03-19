@@ -18,9 +18,11 @@ pipeline {
 
         stage('Build') {
             steps {
-                // 【标注：必须进入子目录执行】
                 dir('assignment1-shopping-cart') {
-                    sh 'mvn clean install -DskipTests'
+                    sh 'echo PATH=$PATH'
+                    sh 'which mvn || true'
+                    sh '/opt/homebrew/bin/mvn -v'
+                    sh '/opt/homebrew/bin/mvn clean install -DskipTests'
                 }
             }
         }
