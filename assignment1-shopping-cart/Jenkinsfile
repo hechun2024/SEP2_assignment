@@ -43,15 +43,9 @@ pipeline {
 
         stage('Publish Coverage Report') {
             steps {
-                script {
-                    if (fileExists('assignment1-shopping-cart/target/site/jacoco/jacoco.xml')) {
-                        recordCoverage(
-                            tools: [[parser: 'JACOCO', pattern: 'assignment1-shopping-cart/target/site/jacoco/jacoco.xml']]
-                        )
-                    } else {
-                        echo 'No JaCoCo XML report found, skipping coverage publish.'
-                    }
-                }
+                recordCoverage(
+                    tools: [[parser: 'JACOCO', pattern: 'assignment1-shopping-cart/target/site/jacoco/jacoco.xml']]
+                )
             }
         }
 
