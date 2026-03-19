@@ -52,16 +52,27 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('assignment1-shopping-cart') {
-                    sh "docker build --platform linux/amd64 -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
+                    sh '''
+                        /usr/local/bin/docker --version
+                        /usr/local/bin/docker build --platform linux/amd64 -t $DOCKERHUB_REPO:$DOCKER_IMAGE_TAG .
+                    '''
                 }
             }
         }
 
         stage('Push Docker Image to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "echo \$PASS | docker login -u \$USER --password-stdin"
-                    sh "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
+                withCredentials([usernamePassword(
+                    credentialsId: env.DOCKERHUB_CREDENTIALS_ID,
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_PASSWORD'
+                )]) {
+                    dir('assignment1-shopping-cart') {
+                        sh '''
+                            echo "$DOCKERHUB_PASSWORD" | /usr/local/bin/docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                            /usr/local/bin/docker push $DOCKERHUB_REPO:$DOCKER_IMAGE_TAG
+                        '''
+                    }
                 }
             }
         }
