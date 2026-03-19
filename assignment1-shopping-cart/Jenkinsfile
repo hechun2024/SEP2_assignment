@@ -2,20 +2,12 @@ pipeline {
     agent any
 
     environment {
-        // 1. 确保 Jenkins 凭据 ID 正确
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-cred'
         DOCKERHUB_REPO = 'hechun202601/shopping-cart-localization'
         DOCKER_IMAGE_TAG = 'latest'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // 4. 拉取仓库
-                checkout scm
-            }
-        }
-
         stage('Build') {
             steps {
                 dir('assignment1-shopping-cart') {
@@ -29,59 +21,47 @@ pipeline {
 
         stage('Test') {
             steps {
-                // 【标注：进入子目录执行单元测试】
                 dir('assignment1-shopping-cart') {
-                    sh 'mvn test'
+                    sh '/opt/homebrew/bin/mvn test'
                 }
             }
         }
 
         stage('Code Coverage') {
             steps {
-                // 【标注：生成 JaCoCo 报告】
                 dir('assignment1-shopping-cart') {
-                    sh 'mvn jacoco:report'
+                    sh '/opt/homebrew/bin/mvn jacoco:report'
                 }
             }
         }
 
         stage('Publish Test Results') {
             steps {
-                // Jenkins 会自动搜索工作区下的 xml
                 junit '**/target/surefire-reports/*.xml'
             }
         }
 
         stage('Publish Coverage Report') {
             steps {
-                // 发布测试覆盖率结果
                 jacoco()
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // 【标注：进入子目录并指定 amd64 架构构建】
-                    dir('assignment1-shopping-cart') {
-                        sh "docker build --platform linux/amd64 -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
-                    }
+                dir('assignment1-shopping-cart') {
+                    sh "docker build --platform linux/amd64 -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
                 }
             }
         }
 
         stage('Push Docker Image to Docker Hub') {
             steps {
-                script {
-                    // 登录并推送镜像 [cite: 98, 100, 101]
-                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh "echo \$PASS | docker login -u \$USER --password-stdin"
-                        sh "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
-                    }
+                withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh "echo \$PASS | docker login -u \$USER --password-stdin"
+                    sh "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
                 }
             }
         }
     }
-
-
 }
