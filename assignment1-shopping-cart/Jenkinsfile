@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // 4. 拉取仓库
-                git 'https://github.com/hechun2024/SEP2_assignment.git'
+                checkout scm
             }
         }
 
