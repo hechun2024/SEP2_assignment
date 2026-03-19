@@ -13,4 +13,4 @@
 ## Run locally
 ```bash
 mvn clean package
-java -jar target/shopping-cart-localization-1.0-SNAPSHOT.jar
+java -jar target/app.jar

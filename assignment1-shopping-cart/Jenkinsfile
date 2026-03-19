@@ -13,8 +13,8 @@ pipeline {
                 dir('assignment1-shopping-cart') {
                     sh 'echo PATH=$PATH'
                     sh 'which mvn || true'
-                    sh '/opt/homebrew/bin/mvn -v'
-                    sh '/opt/homebrew/bin/mvn clean install -DskipTests'
+                    sh 'mvn -v || /opt/homebrew/bin/mvn -v'
+                    sh 'mvn clean install -DskipTests || /opt/homebrew/bin/mvn clean install -DskipTests'
                 }
             }
         }
@@ -22,7 +22,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir('assignment1-shopping-cart') {
-                    sh '/opt/homebrew/bin/mvn test'
+                    sh 'mvn test || /opt/homebrew/bin/mvn test'
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline {
         stage('Code Coverage') {
             steps {
                 dir('assignment1-shopping-cart') {
-                    sh '/opt/homebrew/bin/mvn jacoco:report'
+                    sh 'mvn jacoco:report || /opt/homebrew/bin/mvn jacoco:report'
                 }
             }
         }
