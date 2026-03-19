@@ -43,7 +43,18 @@ pipeline {
 
         stage('Publish Coverage Report') {
             steps {
-                jacoco()
+                script {
+                    if (fileExists('assignment1-shopping-cart/target/jacoco.exec')) {
+                        jacoco(
+                            execPattern: 'assignment1-shopping-cart/target/jacoco.exec',
+                            classPattern: 'assignment1-shopping-cart/target/classes',
+                            sourcePattern: 'assignment1-shopping-cart/src/main/java',
+                            exclusionPattern: ''
+                        )
+                    } else {
+                        echo 'No JaCoCo execution data found, skipping coverage publish.'
+                    }
+                }
             }
         }
 
