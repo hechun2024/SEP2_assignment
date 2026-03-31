@@ -44,4 +44,14 @@ public class CartCalculatorTest {
         Locale locale = LanguageSelector.selectLocale(scanner);
         assertEquals("en", locale.getLanguage());
     }
+
+    @Test
+    void testMainRuns() {
+        App.main(new String[]{});
+    }
+
+    @Test
+    void testInvalidLanguage() {
+        assertThrows(Exception.class, () -> selector.select("invalid"));
+    }
 }
