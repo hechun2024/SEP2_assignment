@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-cred'
-        DOCKERHUB_REPO = 'hechun202601/shopping-cart-localization'
+        DOCKERHUB_REPO = 'hechun202601/shopping-cart-ui'
         DOCKER_IMAGE_TAG = 'latest'
     }
 
