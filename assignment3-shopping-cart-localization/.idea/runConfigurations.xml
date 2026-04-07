@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+    <component name="RunConfigurationProducerService">
+        <option name="ignoredProducers">
+            <set>
+                <option value="com.android.tools.idea.compose.preview.PreviewRunConfigurationProducer" />
+            </set>
+        </option>
+    </component>
+    <component name="RunManager" selected="MavenRunConfiguration.Run Shopping Cart">
+        <configuration default="false" name="Run Shopping Cart" type="MavenRunConfiguration">
+            <MavenSettings>
+                <option name="myGeneralSettings" />
+                <option name="myRunnerSettings" />
+                <option name="myDavAccessSettings" />
+                <option name="myRunnerParameters" value="clean compile javafx:run" />
+                <option name="passParentEnvs" value="true" />
+            </MavenSettings>
+            <method v="2" />
+        </configuration>
+        <configuration default="false" name="Build Project" type="MavenRunConfiguration">
+            <MavenSettings>
+                <option name="myGeneralSettings" />
+                <option name="myRunnerSettings" />
+                <option name="myDavAccessSettings" />
+                <option name="myRunnerParameters" value="clean package" />
+                <option name="passParentEnvs" value="true" />
+            </MavenSettings>
+            <method v="2" />
+        </configuration>
+        <configuration default="false" name="Run Tests" type="MavenRunConfiguration">
+            <MavenSettings>
+                <option name="myGeneralSettings" />
+                <option name="myRunnerSettings" />
+                <option name="myDavAccessSettings" />
+                <option name="myRunnerParameters" value="clean test" />
+                <option name="passParentEnvs" value="true" />
+            </MavenSettings>
+            <method v="2" />
+        </configuration>
+    </component>
+</project>
+
