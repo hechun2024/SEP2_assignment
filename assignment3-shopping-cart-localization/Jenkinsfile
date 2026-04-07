@@ -3,14 +3,14 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-cred'
-        DOCKERHUB_REPO = 'hechun202601/shopping-cart-ui'
+        DOCKERHUB_REPO = 'hechun202601/shopping-cart-db-localization'
         DOCKER_IMAGE_TAG = 'latest'
     }
 
     stages {
         stage('Build') {
             steps {
-                dir('assignment2-shopping-cart-ui') {
+                dir('assignment3-shopping-cart-localization') {
                     sh 'echo PATH=$PATH'
                     sh 'which mvn || true'
                     sh 'mvn -v || /opt/homebrew/bin/mvn -v'
@@ -21,7 +21,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                dir('assignment2-shopping-cart-ui') {
+                dir('assignment3-shopping-cart-localization') {
                     sh 'mvn test || /opt/homebrew/bin/mvn test'
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
 
         stage('Code Coverage') {
             steps {
-                dir('assignment2-shopping-cart-ui') {
+                dir('assignment3-shopping-cart-localization') {
                     sh 'mvn jacoco:report || /opt/homebrew/bin/mvn jacoco:report'
                 }
             }
@@ -44,14 +44,14 @@ pipeline {
         stage('Publish Coverage Report') {
             steps {
                 recordCoverage(
-                    tools: [[parser: 'JACOCO', pattern: 'assignment2-shopping-cart-ui/target/site/jacoco/jacoco.xml']]
+                    tools: [[parser: 'JACOCO', pattern: 'assignment3-shopping-cart-localization/target/site/jacoco/jacoco.xml']]
                 )
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('assignment2-shopping-cart-ui') {
+                dir('assignment3-shopping-cart-localization') {
                     sh '''
                         export PATH=/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
                         echo "PATH=$PATH"
@@ -71,7 +71,7 @@ pipeline {
                     usernameVariable: 'DOCKERHUB_USERNAME',
                     passwordVariable: 'DOCKERHUB_PASSWORD'
                 )]) {
-                    dir('assignment2-shopping-cart-ui') {
+                    dir('assignment3-shopping-cart-localization') {
                         sh '''
                             export PATH=/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
                             which docker
@@ -83,6 +83,7 @@ pipeline {
                 }
             }
         }
+    }
 }
 
-}
+

@@ -40,6 +40,7 @@ public class Controller {
     private Label resultLabel;
 
     private final LocalizationService localizationService = new LocalizationService();
+    private final CartService cartService = new CartService();
     private Map<String, String> messages = new HashMap<>();
 
     private Locale currentLocale = Locale.US;
@@ -48,6 +49,7 @@ public class Controller {
     private final List<TextField> priceFields = new ArrayList<>();
     private final List<TextField> quantityFields = new ArrayList<>();
     private final List<Label> itemTotalLabels = new ArrayList<>();
+    private double cartTotal = 0.0;
 
     @FXML
     public void initialize() {
@@ -82,6 +84,7 @@ public class Controller {
 
         // 如果数据库里没有对应语言，回退到英文
         if (messages.isEmpty()) {
+            System.err.println("[Controller] No strings found for " + currentLanguage + ", falling back to en_US");
             currentLanguage = "en_US";
             currentLocale = Locale.US;
             messages = localizationService.getStrings(currentLanguage);
@@ -200,6 +203,7 @@ public class Controller {
     @FXML
     private void handleCalculate() {
         double total = 0;
+        List<CartItem> items = new ArrayList<>();
 
         try {
             for (int i = 0; i < priceFields.size(); i++) {
@@ -209,10 +213,17 @@ public class Controller {
                 double itemTotal = price * qty;
                 total += itemTotal;
 
+                items.add(new CartItem(i + 1, price, qty, itemTotal));
                 itemTotalLabels.get(i).setText(buildItemTotalText(i + 1, itemTotal));
             }
 
+            cartTotal = total;
             resultLabel.setText(msg("total", "Total:") + " " + total);
+
+            // Save cart record to database
+            if (items.size() > 0) {
+                cartService.saveCartRecord(items.size(), total, currentLanguage, items);
+            }
 
         } catch (Exception e) {
             resultLabel.setText(msg("total", "Total:") + " Error");

@@ -24,7 +24,10 @@ public class LocalizationService {
                 }
             }
 
+            System.out.println("[LocalizationService] Loaded " + localizedStrings.size() + " strings for language: " + language);
+
         } catch (Exception e) {
+            System.err.println("[LocalizationService] Error loading strings for language: " + language);
             e.printStackTrace();
         }
 

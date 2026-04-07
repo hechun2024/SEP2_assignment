@@ -1,7 +1,7 @@
 # 使用 JDK 21 基础镜像
 FROM eclipse-temurin:21-jdk
 
-# 合并所有安装命令，减少镜像层数，虽然慢点但最稳
+# 合并所有安装命令，减少镜像层数
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libgtk-3-0 libgl1 libgl1-mesa-dri libx11-6 libxtst6 libxi6 libxrender1 wget unzip && \
@@ -15,11 +15,19 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# 拷贝你的 Jar 包
-COPY target/assignment2-shopping-cart-ui-1.0-SNAPSHOT.jar /app/app.jar
+# 拷贝正确的 Jar 包
+COPY target/assignment3-shopping-cart-localization-1.0-SNAPSHOT.jar /app/app.jar
+
+# 环境变量配置（可在运行时覆盖）
+ENV MARIADB_HOST=localhost \
+    MARIADB_PORT=3306 \
+    MARIADB_DB=shopping_cart_localization \
+    MARIADB_USER=shopuser \
+    MARIADB_PASSWORD=123456
 
 # 运行
 ENTRYPOINT ["java", \
     "--module-path", "/opt/javafx-sdk-21/lib", \
     "--add-modules", "javafx.controls,javafx.fxml", \
     "-jar", "app.jar"]
+
