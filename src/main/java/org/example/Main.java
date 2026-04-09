@@ -11,7 +11,7 @@ public class Main {
         // Calculate and log the result
         if (logger.isLoggable(Level.INFO)) {
             logger.info(String.format("Result of addMe(12, 4): %d", addMe(12, 4)));
-            logger.info(String.format("Result of addMe(12, 4): %d", subtractMe(12, 4)));
+            logger.info(String.format("Result of subMe(12, 4): %d", subtractMe(12, 4)));
         }
     }
 
