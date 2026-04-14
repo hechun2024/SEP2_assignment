@@ -6,24 +6,46 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL = "jdbc:mariadb://localhost:3306/shopping_cart_localization";
-    private static final String USER = "shopuser";
-    private static final String PASSWORD = "123456";
+    private static final String DEFAULT_URL = "jdbc:mariadb://localhost:3306/shopping_cart_localization";
+    private static final String DEFAULT_USER = "shopuser";
+    private static EnvironmentProvider environmentProvider = System::getenv;
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
+        String url = getUrl();
+        String user = getUser();
+        String password = getPassword();
 
-    public static void main(String[] args) {
-        System.out.println("Testing database connection...");
-
-        try (Connection conn = getConnection()) {
-            System.out.println("Connected to database successfully!");
-            System.out.println("Catalog = " + conn.getCatalog());
-            System.out.println("Is valid = " + conn.isValid(2));
-        } catch (Exception e) {
-            System.out.println("Database connection failed!");
-            e.printStackTrace();
+        if (password == null || password.isBlank()) {
+            throw new IllegalStateException("Missing env var: MARIADB_PASSWORD");
         }
+
+        return DriverManager.getConnection(url, user, password);
     }
+
+    static String getUrl() {
+        String url = environmentProvider.getenv("MARIADB_URL");
+        return url != null ? url : DEFAULT_URL;
+    }
+
+    static String getUser() {
+        String user = environmentProvider.getenv("MARIADB_USER");
+        return user != null ? user : DEFAULT_USER;
+    }
+
+    static String getPassword() {
+        return environmentProvider.getenv("MARIADB_PASSWORD");
+    }
+
+    static void setEnvironmentProvider(EnvironmentProvider provider) {
+        environmentProvider = provider != null ? provider : System::getenv;
+    }
+
+    static void resetEnvironmentProvider() {
+        environmentProvider = System::getenv;
+    }
+
+    interface EnvironmentProvider {
+        String getenv(String key);
+    }
+
 }

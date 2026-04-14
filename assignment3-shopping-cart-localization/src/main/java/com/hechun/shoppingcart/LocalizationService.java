@@ -5,8 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalizationService {
+
+    private static final Logger LOGGER = Logger.getLogger(LocalizationService.class.getName());
 
     public Map<String, String> getStrings(String language) {
         Map<String, String> localizedStrings = new HashMap<>();
@@ -24,11 +28,10 @@ public class LocalizationService {
                 }
             }
 
-            System.out.println("[LocalizationService] Loaded " + localizedStrings.size() + " strings for language: " + language);
+            LOGGER.log(Level.INFO, "Loaded {0} strings for language: {1}", new Object[]{localizedStrings.size(), language});
 
         } catch (Exception e) {
-            System.err.println("[LocalizationService] Error loading strings for language: " + language);
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e, () -> "Error loading strings for language: " + language);
         }
 
         return localizedStrings;

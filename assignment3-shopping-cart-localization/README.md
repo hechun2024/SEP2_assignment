@@ -175,4 +175,11 @@ He Chun | Software Engineering Project 2
 
 ---
 
-**Questions?** Check database connection with `DatabaseConnection.main()` or review `schema.sql` for table structure.
+先生成测试和 coverage
+```bash
+mvn clean verify
+```
+再扫 SonarQube
+```bash
+sonar-scanner
+```

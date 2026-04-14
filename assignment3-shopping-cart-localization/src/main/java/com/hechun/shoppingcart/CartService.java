@@ -52,7 +52,7 @@ public class CartService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new CartServiceException("Database operation failed", e);
         }
     }
 }
