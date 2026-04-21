@@ -1,5 +1,9 @@
 package org.example;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,5 +53,20 @@ class AvgSpd1Test {
         // This tests the method that calls the logger
         double result = AvgSpd1.calculateAndLogAvgSpeed(100.0, 50.0);
         assertEquals(2.0, result, 0.0001);
+    }
+
+    @Test
+    @DisplayName("Should run main with console input")
+    void testMainWithConsoleInput() {
+        InputStream originalIn = System.in;
+        ByteArrayInputStream testInput =
+                new ByteArrayInputStream("100\n50\n".getBytes(StandardCharsets.UTF_8));
+
+        try {
+            System.setIn(testInput);
+            assertDoesNotThrow(() -> AvgSpd1.main(new String[0]));
+        } finally {
+            System.setIn(originalIn);
+        }
     }
 }

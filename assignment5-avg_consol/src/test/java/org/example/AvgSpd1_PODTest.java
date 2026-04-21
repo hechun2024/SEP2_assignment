@@ -340,4 +340,27 @@ class AvgSpd1_PODTest {
         String response = outputStream.toString(StandardCharsets.UTF_8);
         assertTrue(response.contains("Try Again"));
     }
+
+    @Test
+    @DisplayName("ConfigureServer registers contexts and executor")
+    void configureServer_registersContextsAndExecutor() {
+        com.sun.net.httpserver.HttpServer server = mock(com.sun.net.httpserver.HttpServer.class);
+
+        AvgSpd1_POD.configureServer(server);
+
+        verify(server).createContext(eq("/"), any(AvgSpd1_POD.RootHandler.class));
+        verify(server).createContext(eq("/calculate"), any(AvgSpd1_POD.CalculateHandler.class));
+        verify(server).setExecutor(isNull());
+    }
+
+    @Test
+    @DisplayName("StartServer starts provided server instance")
+    void startServer_startsProvidedServerInstance() {
+        com.sun.net.httpserver.HttpServer server = mock(com.sun.net.httpserver.HttpServer.class);
+
+        com.sun.net.httpserver.HttpServer startedServer = AvgSpd1_POD.startServer(server, 8081);
+
+        verify(server).start();
+        assertSame(server, startedServer);
+    }
 }

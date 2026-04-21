@@ -17,16 +17,29 @@ public class AvgSpd1_POD {
             Logger.getLogger(AvgSpd1_POD.class.getName());
 
     public static void main(String[] args) throws IOException {
-        int port = 8081;
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        startServer(8081);
+    }
 
+    static HttpServer createServer(int port) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        configureServer(server);
+        return server;
+    }
+
+    static void configureServer(HttpServer server) {
         server.createContext("/", new RootHandler());
         server.createContext("/calculate", new CalculateHandler());
-
         server.setExecutor(null);
-        server.start();
+    }
 
-        logger.info("Server started on port " + 8081);
+    static HttpServer startServer(int port) throws IOException {
+        return startServer(createServer(port), port);
+    }
+
+    static HttpServer startServer(HttpServer server, int port) {
+        server.start();
+        logger.info("Server started on port " + port);
+        return server;
     }
 
     // ---------- Root page ----------
