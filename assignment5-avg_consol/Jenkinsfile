@@ -1,13 +1,12 @@
 pipeline {
     agent any
+
     tools {
         jdk 'JDK17'
         maven 'Maven3'
     }
 
     environment {
-        SONARQUBE_SERVER = 'SonarQubeServer'  // The name of the SonarQube server configured in Jenkins
-        SONAR_TOKEN = 'squ_03c04979c1c428885b5e43b477120dba641c0f97' // Store the token securely
         DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
         DOCKERHUB_REPO = 'hechun202601/lectdemo3010_pod_2026'
         DOCKER_IMAGE_TAG = 'latest'
@@ -29,32 +28,31 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
+            }
             steps {
                 dir('assignment5-avg_consol') {
                     withSonarQubeEnv('SonarQubeServer') {
                         sh """
-                                    ${tool 'SonarScanner'}/bin/sonar-scanner \\
-                                    -Dsonar.projectKey=avg_consol \\
-                                    -Dsonar.sources=src \\
-                                    -Dsonar.projectName=avg_consol \\
-                                    -Dsonar.host.url=http://localhost:9000 \\
-                                    -Dsonar.login=${env.SONAR_TOKEN} \\
-                                    -Dsonar.java.binaries=target/classes
-                                """
+                            ${tool 'SonarScanner'}/bin/sonar-scanner \\
+                            -Dsonar.projectKey=avg_consol \\
+                            -Dsonar.sources=src \\
+                            -Dsonar.projectName=avg_consol \\
+                            -Dsonar.host.url=http://localhost:9000 \\
+                            -Dsonar.token=${SONAR_TOKEN} \\
+                            -Dsonar.java.binaries=target/classes
+                        """
                     }
                 }
             }
         }
-
-
 
         stage('Build Docker Image') {
             steps {
                 dir('assignment5-avg_consol') {
                     script {
                         docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
-                        // Or specify Dockerfile path explicitly if needed
-                        // docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}", "-f ./Dockerfile .")
                     }
                 }
             }
