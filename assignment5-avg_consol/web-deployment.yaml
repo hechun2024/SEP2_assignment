@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
         - name: avg-speed-app
-          image: amirdirin/lectdemo5_2026:latest
+          image: hechun202601/lectdemo3010_pod_2026:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
               name: http
           resources:
             requests:
@@ -38,7 +38,7 @@ spec:
     app: avg-speed-calculator
   ports:
     - port: 8080
-      targetPort: 8080
+      targetPort: 8081
       nodePort: 30080
   type: NodePort
 ---
@@ -51,6 +51,6 @@ metadata:
 spec:
   containers:
     - name: avg-speed-app
-      image: amirdirin/lectdemo5_2026:latest
+      image: hechun202601/lectdemo3010_pod_2026:latest
       ports:
-        - containerPort: 8080
+        - containerPort: 8081

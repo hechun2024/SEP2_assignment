@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name: avg-speed-app
-      image: amirdirin/lectdemo5_2026:latest
+      image: hechun202601/lectdemo3010_pod_2026:latest
       imagePullPolicy: Always
       stdin: true
       tty: true
