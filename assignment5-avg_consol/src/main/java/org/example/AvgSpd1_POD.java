@@ -121,7 +121,7 @@ public class AvgSpd1_POD {
 
                 double result = avgSpd(distance, time);
 
-                response = String.format("""
+                response = """
                     <html>
                     <body>
                         <h2>Result</h2>
@@ -131,7 +131,7 @@ public class AvgSpd1_POD {
                         <a href="/">Calculate Again</a>
                     </body>
                     </html>
-                """, distance, time, result);
+                """.formatted(distance, time, result);
 
             } catch (Exception e) {
                 logger.warning("Calculation error: " + e.getMessage());

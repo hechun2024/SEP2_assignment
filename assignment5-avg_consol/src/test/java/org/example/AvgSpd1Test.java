@@ -57,14 +57,15 @@ class AvgSpd1Test {
 
     @Test
     @DisplayName("Should run main with console input")
-    void testMainWithConsoleInput() {
+    void testMainWithConsoleInput() throws Exception {
         InputStream originalIn = System.in;
-        ByteArrayInputStream testInput =
-                new ByteArrayInputStream("100\n50\n".getBytes(StandardCharsets.UTF_8));
 
         try {
+            try (ByteArrayInputStream testInput =
+                         new ByteArrayInputStream("100\n50\n".getBytes(StandardCharsets.UTF_8))) {
             System.setIn(testInput);
             assertDoesNotThrow(() -> AvgSpd1.main(new String[0]));
+            }
         } finally {
             System.setIn(originalIn);
         }
