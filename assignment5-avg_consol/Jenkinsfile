@@ -60,13 +60,18 @@ pipeline {
         }
 
         stage('Push Docker Image to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
-                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                    steps {
+                        script {
+                            // 使用 withCredentials 获取 Docker Hub 的账号密码
+                            withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                                sh """
+                                    echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                                    docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                                    docker logout
+                                """
+                            }
+                        }
                     }
                 }
-            }
-        }
     }
 }
