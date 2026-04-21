@@ -38,7 +38,7 @@ public class AvgSpd1_POD {
 
     static HttpServer startServer(HttpServer server, int port) {
         server.start();
-        logger.info("Server started on port " + port);
+        logger.info(() -> "Server started on port " + port);
         return server;
     }
 
@@ -134,7 +134,7 @@ public class AvgSpd1_POD {
                 """.formatted(distance, time, result);
 
             } catch (Exception e) {
-                logger.warning("Calculation error: " + e.getMessage());
+                logger.warning(() -> "Calculation error: " + e.getMessage());
                 response = """
                     <html>
                     <body>
